@@ -3,18 +3,13 @@ Note from Sakuraa: I really didnt do much, just having a source for future modde
 
 ### Imaginary Rules
 
-No modifications that make Bark a cheat
-
-Do not abuse glitches.
-
-Refrain from trolling or deciving other gorillas.
-
-Have fun.
+- No modifications that make Bark a cheat
+- Do not abuse glitches.
+- Refrain from trolling or deciving other gorillas.
+- Have fun.
 
 ### Credits
 
-Graze is the previous maintainer of Bark
-
-KyleTheScientist made the backbone of Bark called Bark.
-
-baggZ, Gadabuda, Monky made mods
+- Graze is the previous maintainer of Bark
+- KyleTheScientist made the backbone of Bark called Bark.
+- baggZ, Gadabuda, Monky made mods
