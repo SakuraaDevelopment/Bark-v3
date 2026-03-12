@@ -1,0 +1,146 @@
+﻿using System;
+using System.Collections;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using Bark.Gestures;
+using Bark.GUI;
+using Bark.Modules;
+using Bark.Networking;
+using Bark.Tools;
+using BepInEx;
+using BepInEx.Configuration;
+using GorillaLocomotion;
+using GorillaNetworking;
+using Bark.Extensions;
+using HarmonyLib;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Bark;
+
+[BepInPlugin(PluginInfo.Guid, PluginInfo.Name, PluginInfo.Version)]
+public class Plugin : BaseUnityPlugin
+{
+    public static Plugin? Instance;
+    public static bool Initialized;
+    public static AssetBundle? AssetBundle;
+    public static MenuController? MenuController;
+    private static GameObject? monkeMenuPrefab;
+    public static ConfigFile? ConfigFile;
+
+    public static Text? DebugText;
+    private GestureTracker? gt;
+    private NetworkPropertyHandler? nph;
+
+    public static bool IsSteam { get; private set; }
+    public static bool DebugMode { get; protected set; } = false;
+
+    private void Awake()
+    {
+        Logging.Init();
+        Instance = this;
+        HarmonyPatches.ApplyHarmonyPatches();
+        ConfigFile = new ConfigFile(Path.Combine(Paths.ConfigPath, "Bark.cfg"), true);
+        var list = BarkModule.GetBarkModuleTypes();
+        foreach (var bindConfigs in list.Select(moduleType => moduleType.GetMethod("BindConfigEntries")).Select(info => info).OfType<MethodInfo>())
+        {
+            bindConfigs.Invoke(null, null);
+        }
+
+        GorillaTagger.OnPlayerSpawned(OnGameInitialized);
+        AssetBundle = AssetUtils.LoadAssetBundle("Bark/Resources/barkbundle");
+        monkeMenuPrefab = AssetBundle?.LoadAsset<GameObject>("Bark Menu");
+        monkeMenuPrefab!.name = "Bark Menu";
+        MenuController.BindConfigEntries();
+    }
+
+    public void Setup()
+    {
+        gt = gameObject.GetOrAddComponent<GestureTracker>();
+        nph = gameObject.GetOrAddComponent<NetworkPropertyHandler>();
+        MenuController = Instantiate(monkeMenuPrefab)?.AddComponent<MenuController>();
+    }
+
+    public void Cleanup()
+    {
+        try
+        {
+            MenuController?.gameObject.Obliterate();
+            gt?.Obliterate();
+            nph?.Obliterate();
+        }
+        catch (Exception e)
+        {
+            Logging.Exception(e);
+        }
+    }
+
+    private void CreateDebugGUI()
+    {
+        try
+        {
+            if (GTPlayer.Instance)
+            {
+                var canvas = GTPlayer.Instance.headCollider.transform.GetComponentInChildren<Canvas>();
+                if (!canvas)
+                {
+                    canvas = new GameObject("~~~Bark Debug Canvas").AddComponent<Canvas>();
+                    canvas.renderMode = RenderMode.WorldSpace;
+                    canvas.transform.SetParent(GTPlayer.Instance.headCollider.transform);
+                    canvas.transform.localPosition = Vector3.forward * .35f;
+                    canvas.transform.localRotation = Quaternion.identity;
+                    canvas.transform.localScale = Vector3.one;
+                    canvas.gameObject.AddComponent<CanvasScaler>();
+                    canvas.gameObject.AddComponent<GraphicRaycaster>();
+                    canvas.GetComponent<RectTransform>().localScale = Vector3.one * .035f;
+                    var text = new GameObject("~~~Text").AddComponent<Text>();
+                    text.transform.SetParent(canvas.transform);
+                    text.transform.localPosition = Vector3.zero;
+                    text.transform.localRotation = Quaternion.identity;
+                    text.transform.localScale = Vector3.one;
+                    text.color = Color.green;
+                    //text.text = "Hello World";
+                    text.fontSize = 24;
+                    text.font = Font.CreateDynamicFontFromOSFont("Arial", 24);
+                    text.alignment = TextAnchor.MiddleCenter;
+                    text.horizontalOverflow = HorizontalWrapMode.Overflow;
+                    text.verticalOverflow = VerticalWrapMode.Overflow;
+                    text.color = Color.white;
+                    text.GetComponent<RectTransform>().localScale = Vector3.one * .02f;
+                    DebugText = text;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Logging.Exception(e);
+        }
+    }
+
+    private void OnGameInitialized()
+    {
+        Invoke(nameof(DelayedSetup), 2);
+    }
+
+    private void DelayedSetup()
+    {
+        try
+        {
+            Logging.Debug("OnGameInitialized");
+            Initialized = true;
+            var platform = (PlatformTagJoin)Traverse.Create(PlayFabAuthenticator.instance).Field("platform").GetValue();
+            Logging.Info("Platform: ", platform);
+            IsSteam = platform.PlatformTag.Contains("Steam");
+
+            Setup();
+            
+            if (DebugMode)
+                CreateDebugGUI();
+        }
+        catch (Exception ex)
+        {
+            Logging.Exception(ex);
+        }
+    }
+}

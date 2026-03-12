@@ -1,0 +1,105 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Bark.Networking;
+using Bark.Tools;
+using BepInEx.Configuration;
+using UnityEngine;
+
+namespace Bark.Modules;
+
+public abstract class BarkModule : MonoBehaviour
+{
+    public static BarkModule LastEnabled;
+    public static Dictionary<string, bool> enabledModules = new();
+    public static string enabledModulesKey = "BarkEnabledModules";
+    public ButtonController button;
+    public List<ConfigEntryBase> ConfigEntries;
+
+    protected virtual void Start()
+    {
+        enabled = false;
+    }
+
+    protected virtual void OnEnable()
+    {
+        LastEnabled = this;
+        Plugin.ConfigFile.SettingChanged += SettingsChanged;
+        if (button)
+            button.IsPressed = true;
+        SetStatus(true);
+    }
+
+    protected virtual void OnDisable()
+    {
+        Plugin.ConfigFile.SettingChanged -= SettingsChanged;
+        if (button)
+            button.IsPressed = false;
+        Cleanup();
+        SetStatus(false);
+    }
+
+    protected virtual void OnDestroy()
+    {
+        Cleanup();
+    }
+
+    protected virtual void ReloadConfiguration()
+    {
+    }
+
+    public abstract string GetDisplayName();
+
+    protected void SettingsChanged(object sender, SettingChangedEventArgs e)
+    {
+        foreach (var field in GetType().GetFields())
+            if (e.ChangedSetting == field.GetValue(this))
+                ReloadConfiguration();
+    }
+
+    public abstract string Tutorial();
+
+    protected abstract void Cleanup();
+
+    public void SetStatus(bool enabled)
+    {
+        var name = GetDisplayName();
+        if (enabledModules.ContainsKey(name))
+            enabledModules[name] = enabled;
+        else
+            enabledModules.Add(name, enabled);
+        NetworkPropertyHandler.Instance?.ChangeProperty(enabledModulesKey, enabledModules);
+    }
+
+    public static List<Type> GetBarkModuleTypes()
+    {
+        try
+        {
+            var types = Assembly.GetExecutingAssembly().GetTypes().Where(t => typeof(BarkModule).IsAssignableFrom(t))
+                .ToList();
+            types.Sort((x, y) =>
+            {
+                var xField = x.GetField("DisplayName", BindingFlags.Public | BindingFlags.Static);
+                var yField = y.GetField("DisplayName", BindingFlags.Public | BindingFlags.Static);
+
+                if (xField == null || yField == null)
+                    return 0;
+
+                var xValue = (string)xField.GetValue(null);
+                var yValue = (string)yField.GetValue(null);
+
+                return string.Compare(xValue, yValue);
+            });
+            return types;
+        }
+        catch (ReflectionTypeLoadException ex)
+        {
+            Logging.Exception(ex);
+            Logging.Warning("Inner exceptions:");
+            foreach (var inner in ex.LoaderExceptions) Logging.Exception(inner);
+        }
+
+        return null;
+    }
+}

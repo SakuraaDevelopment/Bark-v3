@@ -1,0 +1,79 @@
+﻿using Bark.Gestures;
+using GorillaLocomotion;
+using UnityEngine;
+
+namespace Bark.Interaction;
+
+public class BarkGrabbable : BarkInteractable
+{
+    public float throwForceMultiplier = 1f;
+
+    public Vector3 LocalRotation = Vector3.zero;
+    public bool throwOnDetach;
+    private readonly Vector3 mirrorScale = new(-1, 1, 1);
+    private Vector3 _localPos;
+    private bool kinematicCache;
+    private GorillaVelocityEstimator velEstimator;
+
+    public Vector3 LocalPosition
+    {
+        get => _localPos;
+        set
+        {
+            _localPos = value;
+            MirroredLocalPosition = Vector3.Scale(value, mirrorScale);
+        }
+    }
+
+    public Vector3 MirroredLocalPosition { get; private set; }
+
+    protected override void Awake()
+    {
+        base.Awake();
+        var gt = GestureTracker.Instance;
+        validSelectors = new[] { gt.leftPalmInteractor, gt.rightPalmInteractor };
+        velEstimator = gameObject.AddComponent<GorillaVelocityEstimator>();
+    }
+
+    public override void OnSelect(BarkInteractor interactor)
+    {
+        if (GetComponent<Rigidbody>() is Rigidbody rb)
+        {
+            kinematicCache = rb.isKinematic;
+            rb.isKinematic = true;
+        }
+
+        transform.SetParent(interactor.transform);
+        if (interactor.IsLeft)
+            transform.localPosition = LocalPosition;
+        else
+            transform.localPosition = MirroredLocalPosition;
+        transform.localRotation = Quaternion.Euler(LocalRotation);
+        base.OnSelect(interactor);
+    }
+
+    public override void OnDeselect(BarkInteractor interactor)
+    {
+        transform.SetParent(null);
+        if (GetComponent<Rigidbody>() is Rigidbody rb)
+        {
+            if (throwOnDetach)
+            {
+                rb.isKinematic = false;
+                rb.useGravity = true;
+
+                // Apply the force to the rigidbody
+                rb.velocity = GTPlayer.Instance.GetComponent<Rigidbody>().velocity +
+                              velEstimator.linearVelocity * throwForceMultiplier;
+                rb.velocity *= 1 / GTPlayer.Instance.scale;
+                rb.angularVelocity = velEstimator.angularVelocity;
+            }
+            else
+            {
+                rb.isKinematic = kinematicCache;
+            }
+        }
+
+        base.OnDeselect(interactor);
+    }
+}
