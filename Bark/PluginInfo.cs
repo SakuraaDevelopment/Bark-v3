@@ -15,7 +15,6 @@ internal static class PluginInfo
         "- Have fun.\n" +
         "\n" +
         "Credits\n" +
-        "- Sakuraa, current maintainer of Bark.\n" +
         "- Graze is the previous maintainer of Bark.\n" +
         "- KyleTheScientist made the backbone of Bark called Bark.\n" +
         "- baggZ, Gadabuda, Monky made mods.\n";
