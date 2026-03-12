@@ -26,8 +26,7 @@ public class Baggy : BarkModule
             Bag.transform.localScale /= 4;
             Bag.SetActive(false);
         }
-
-        NetworkPropertyHandler.Instance.OnPlayerModStatusChanged += OnPlayerModStatusChanged;
+        
         VRRigCachePatches.OnRigCached += OnRigCached;
     }
 
@@ -43,17 +42,6 @@ public class Baggy : BarkModule
         catch (Exception e)
         {
             Logging.Exception(e);
-        }
-    }
-
-    private void OnPlayerModStatusChanged(NetworkPlayer player, string mod, bool enabled)
-    {
-        if (mod == DisplayName && player != NetworkSystem.Instance.LocalPlayer && player.UserId == "9ABD0C174289F58E")
-        {
-            if (enabled)
-                player.Rig().gameObject.GetOrAddComponent<NetBag>();
-            else
-                Destroy(player.Rig().gameObject.GetComponent<NetBag>());
         }
     }
 

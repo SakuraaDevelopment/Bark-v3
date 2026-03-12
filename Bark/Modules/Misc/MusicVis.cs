@@ -15,7 +15,6 @@ internal class MusicVis : BarkModule
 
     private void Awake()
     {
-        NetworkPropertyHandler.Instance.OnPlayerModStatusChanged += OnPlayerModStatusChanged;
         VRRigCachePatches.OnRigCached += OnRigCached;
     }
 
@@ -56,17 +55,6 @@ internal class MusicVis : BarkModule
     private void OnRigCached(NetPlayer player, VRRig rig)
     {
         rig?.gameObject?.GetComponent<VisMarker>()?.Obliterate();
-    }
-
-    private void OnPlayerModStatusChanged(NetPlayer player, string mod, bool enabled)
-    {
-        if (mod == GetDisplayName() && player.UserId == "E5F14084F14ED3CE")
-        {
-            if (enabled)
-                player.Rig().gameObject.GetOrAddComponent<VisMarker>();
-            else
-                Destroy(player.Rig().gameObject.GetComponent<VisMarker>());
-        }
     }
 }
 

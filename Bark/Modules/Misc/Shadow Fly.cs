@@ -24,7 +24,6 @@ public class ShadowFly : BarkModule
         }
         
         localWings.SetActive(false);
-        NetworkPropertyHandler.Instance.OnPlayerModStatusChanged += OnPlayerModStatusChanged;
         VRRigCachePatches.OnRigCached += OnRigCached;
     }
 
@@ -33,17 +32,6 @@ public class ShadowFly : BarkModule
         if (!MenuController.Instance.Built) return;
         base.OnEnable();
         localWings.SetActive(true);
-    }
-
-    private void OnPlayerModStatusChanged(NetPlayer player, string mod, bool enabled)
-    {
-        if (mod == GetDisplayName() && player != NetworkSystem.Instance.LocalPlayer && player.UserId == "AE10C04744CCF6E7")
-        {
-            if (enabled)
-                player.Rig().gameObject.GetOrAddComponent<NetShadWing>();
-            else
-                Destroy(player.Rig().gameObject.GetComponent<NetShadWing>());
-        }
     }
 
     protected override void Cleanup()

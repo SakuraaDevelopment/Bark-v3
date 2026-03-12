@@ -19,7 +19,6 @@ internal class StoneBroke : BarkModule
 
     private void Awake()
     {
-        NetworkPropertyHandler.Instance.OnPlayerModStatusChanged += OnPlayerModStatusChanged;
         VRRigCachePatches.OnRigCached += OnRigCached;
     }
 
@@ -55,23 +54,6 @@ internal class StoneBroke : BarkModule
         }
     }
 
-
-    private void OnPlayerModStatusChanged(NetPlayer player, string mod, bool enabled)
-    {
-        if (mod == GetDisplayName() && player.UserId == "CA8FDFF42B7A1836")
-        {
-            if (enabled)
-            {
-                player.Rig().gameObject.GetOrAddComponent<Awsomepnix>();
-            }
-            else
-            {
-                player.Rig().gameObject.GetComponent<Awsomepnix>().ps.gameObject.Obliterate();
-                player.Rig().gameObject.GetComponent<Awsomepnix>().Obliterate();
-            }
-        }
-    }
-
     protected override void Cleanup()
     {
         LocalP?.ps.Obliterate();
@@ -89,24 +71,11 @@ internal class StoneBroke : BarkModule
             wa = gameObject.GetComponent<NetworkedPlayer>();
 
             wa.OnGripPressed += Boom;
-            if (PhotonNetwork.LocalPlayer.UserId == "CA8FDFF42B7A1836")
-            {
-                inputL = GestureTracker.Instance.GetInputTracker("grip", XRNode.LeftHand);
-                inputL.OnPressed += LocalBoom;
-
-                inputR = GestureTracker.Instance.GetInputTracker("grip", XRNode.RightHand);
-                inputR.OnPressed += LocalBoom;
-            }
         }
 
         private void OnDestroy()
         {
             wa.OnGripPressed -= Boom;
-            if (PhotonNetwork.LocalPlayer.UserId == "CA8FDFF42B7A1836")
-            {
-                inputL.OnPressed -= LocalBoom;
-                inputR.OnPressed -= LocalBoom;
-            }
         }
 
         private void LocalBoom(InputTracker tracker)

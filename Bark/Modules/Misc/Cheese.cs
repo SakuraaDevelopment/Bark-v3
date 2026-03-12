@@ -27,7 +27,6 @@ public class Cheese : BarkModule
             DaCheese.transform.localScale /= 2;
         }
 
-        NetworkPropertyHandler.Instance.OnPlayerModStatusChanged += OnPlayerModStatusChanged;
         VRRigCachePatches.OnRigCached += OnRigCached;
         DaCheese.SetActive(false);
     }
@@ -43,17 +42,6 @@ public class Cheese : BarkModule
         catch (Exception e)
         {
             Logging.Exception(e);
-        }
-    }
-
-    private void OnPlayerModStatusChanged(NetworkPlayer player, string mod, bool enabled)
-    {
-        if (mod == DisplayName && player != NetworkSystem.Instance.LocalPlayer && player.UserId == "B1B20DEEEDB71C63")
-        {
-            if (enabled)
-                player.Rig().gameObject.GetOrAddComponent<NetCheese>();
-            else
-                Destroy(player.Rig().gameObject.GetComponent<NetCheese>());
         }
     }
 

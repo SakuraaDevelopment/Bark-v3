@@ -58,7 +58,6 @@ public class Halo : BarkModule
             lightBeamPrefab = Plugin.AssetBundle.LoadAsset<GameObject>("Light Beam");
         }
 
-        NetworkPropertyHandler.Instance.OnPlayerModStatusChanged += OnPlayerModStatusChanged;
         VRRigCachePatches.OnRigCached += OnRigCached;
     }
 
@@ -80,17 +79,6 @@ public class Halo : BarkModule
     private void OnRigCached(NetPlayer player, VRRig rig)
     {
         rig?.gameObject?.GetComponent<HaloMarker>()?.Obliterate();
-    }
-
-    private void OnPlayerModStatusChanged(NetworkPlayer player, string mod, bool enabled)
-    {
-        if (mod == DisplayName && player.UserId == "JD3moEFc6tOGYSAp4MjKsIwVycfrAUR5nLkkDNSvyvE=".DecryptString())
-        {
-            if (enabled)
-                player.Rig().gameObject.GetOrAddComponent<HaloMarker>();
-            else
-                Destroy(player.Rig().gameObject.GetComponent<HaloMarker>());
-        }
     }
 
     protected override void Cleanup()
