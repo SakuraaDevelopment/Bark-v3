@@ -8,5 +8,5 @@ Have fun.
 
 Credits
 Graze is the previous maintainer of Bark
-KyleTheScientist made the backbone of Bark called Bark.\n" +
-baggZ, Gadabuda, Monky made mods.\n";
+KyleTheScientist made the backbone of Bark called Bark.
+baggZ, Gadabuda, Monky made mods
