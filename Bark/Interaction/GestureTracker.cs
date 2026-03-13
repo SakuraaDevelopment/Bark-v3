@@ -314,27 +314,44 @@ public class GestureTracker : MonoBehaviour
             radius = 1 / 4f;
         chest.transform.localScale = new Vector3(radius, height, radius);
 
-        var leftPalm = GameObject.Find(string.Format(localRigPath + palmPath, "L")).transform;
+        var localRigObj = GameObject.Find("Player Objects/Local VRRig");
+        if (localRigObj == null)
+        {
+            Logging.Warning("Could not find Local VRRig object");
+            return;
+        }
+        var rigTransform = localRigObj.transform;
+
+        var leftPalm = rigTransform.FindChildRecursive("palm.01.L");
+        if (leftPalm == null)
+        {
+            Logging.Warning("Could not find palm.01.L bone");
+            return;
+        }
         leftPalmInteractor = CreateInteractor("Left Palm Interactor", leftPalm, 1 / 16f);
         leftHand = leftPalmInteractor.gameObject;
         leftHand.transform.localRotation = Quaternion.Euler(-90, -90, 0);
 
-        var rightPalm = GameObject.Find(string.Format(localRigPath + palmPath, "R")).transform;
+        var rightPalm = rigTransform.FindChildRecursive("palm.01.R");
+        if (rightPalm == null)
+        {
+            Logging.Warning("Could not find palm.01.R bone");
+            return;
+        }
         rightPalmInteractor = CreateInteractor("Right Palm Interactor", rightPalm, 1 / 16f);
         rightHand = rightPalmInteractor.gameObject;
         rightHand.transform.localRotation = Quaternion.Euler(-90, 0, 0);
 
-
-        leftPointerTransform = GameObject.Find(string.Format(localRigPath + pointerFingerPath, "L")).transform;
+        leftPointerTransform = rigTransform.FindChildRecursive("f_index.03.L");
         leftPointerInteractor = CreateInteractor("Left Pointer Interactor", leftPointerTransform, 1 / 32f);
         leftPointerObj = leftPointerInteractor.gameObject;
 
-        rightPointerTransform = GameObject.Find(string.Format(localRigPath + pointerFingerPath, "R")).transform;
+        rightPointerTransform = rigTransform.FindChildRecursive("f_index.03.R");
         rightPointerInteractor = CreateInteractor("Right Pointer Interactor", rightPointerTransform, 1 / 32f);
         rightPointerObj = rightPointerInteractor.gameObject;
 
-        leftThumbTransform = GameObject.Find(string.Format(localRigPath + thumbPath, "L")).transform;
-        rightThumbTransform = GameObject.Find(string.Format(localRigPath + thumbPath, "R")).transform;
+        leftThumbTransform = rigTransform.FindChildRecursive("thumb.03.L");
+        rightThumbTransform = rigTransform.FindChildRecursive("thumb.03.R");
     }
 
     public BarkInteractor CreateInteractor(string name, Transform parent, float scale)
@@ -446,7 +463,6 @@ public class ControllerInputPollerExt
     public static ControllerInputPollerExt Instance;
     public Vector2 rightControllerStickAxis, leftControllerStickAxis;
     public bool rightControllerStickButton, leftControllerStickButton;
-    private bool steam;
 
     public ControllerInputPollerExt()
     {
@@ -466,6 +482,19 @@ public class ControllerInputPollerExt
         {
             var left = GestureTracker.Instance.leftController;
             var right = GestureTracker.Instance.rightController;
+
+            if (!left.isValid)
+            {
+                left = InputDevices.GetDeviceAtXRNode(XRNode.LeftHand);
+                GestureTracker.Instance.leftController = left;
+            }
+
+            if (!right.isValid)
+            {
+                right = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
+                GestureTracker.Instance.rightController = right;
+            }
+
             left.TryGetFeatureValue(CommonUsages.primary2DAxisClick, out leftControllerStickButton);
             right.TryGetFeatureValue(CommonUsages.primary2DAxisClick, out rightControllerStickButton);
             left.TryGetFeatureValue(CommonUsages.primary2DAxis, out leftControllerStickAxis);

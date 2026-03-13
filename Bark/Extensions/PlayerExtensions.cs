@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Bark.Helpers;
 using Bark.Modules;
 using GorillaLocomotion;
 using HarmonyLib;
@@ -56,6 +57,6 @@ public static class PlayerExtensions
 
     public static VRRig? Rig(this NetPlayer? player)
     {
-        return GorillaParent.instance.vrrigs.FirstOrDefault(rig => rig.OwningNetPlayer == player);
+        return RigHelper.GetActiveRigs().FirstOrDefault(rig => rig.OwningNetPlayer == player);
     }
 }

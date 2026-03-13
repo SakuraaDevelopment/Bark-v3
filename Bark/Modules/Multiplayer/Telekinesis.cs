@@ -6,6 +6,7 @@ using Bark.Tools;
 using BepInEx.Configuration;
 using GorillaLocomotion;
 using Bark.Extensions;
+using Bark.Helpers;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -205,7 +206,7 @@ public class Telekinesis : BarkModule
 
     private void DistributeMidichlorians()
     {
-        foreach (var rig in GorillaParent.instance.vrrigs)
+        foreach (var rig in RigHelper.GetActiveRigs())
             try
             {
                 if (rig.OwningNetPlayer.IsLocal ||

@@ -51,6 +51,11 @@ public static class AssetUtils
     {
         path = FormatPath(path);
         var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
+        if (stream == null)
+        {
+            Console.WriteLine($"No embedded resource found for '{path}'");
+            return null;
+        }
         var bundle = AssetBundle.LoadFromStream(stream);
         stream.Close();
         return bundle;

@@ -6,6 +6,7 @@ using Bark.Networking;
 using Bark.Tools;
 using GorillaLocomotion;
 using Bark.Extensions;
+using Bark.Helpers;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.XR;
@@ -92,7 +93,7 @@ public class Piggyback : BarkModule
         VRRig closestRig = null;
         Transform closestTransform = null;
         var closestDistance = Mathf.Infinity;
-        foreach (var rig in GorillaParent.instance.vrrigs)
+        foreach (var rig in RigHelper.GetActiveRigs())
             try
             {
                 if (rig.OwningNetPlayer.IsLocal) continue;

@@ -7,6 +7,7 @@ using Bark.Networking;
 using Bark.Tools;
 using BepInEx.Configuration;
 using Bark.Extensions;
+using Bark.Helpers;
 using UnityEngine;
 using NetworkPlayer = NetPlayer;
 using Player = GorillaLocomotion.GTPlayer;
@@ -115,7 +116,7 @@ public class Boxing : BarkModule
 
     private void CreateGloves()
     {
-        foreach (var rig in GorillaParent.instance.vrrigs)
+        foreach (var rig in RigHelper.GetActiveRigs())
             try
             {
                 if (rig != GorillaTagger.Instance.offlineVRRig && rig != GorillaTagger.Instance.myVRRig &&

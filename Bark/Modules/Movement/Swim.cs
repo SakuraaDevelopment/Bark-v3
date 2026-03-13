@@ -12,7 +12,18 @@ public class Swim : BarkModule
     protected override void Start()
     {
         base.Start();
-        waterVolume = Instantiate(GameObject.Find("Environment Objects/LocalObjects_Prefab/ForestToBeach/ForestToBeach_Prefab_V4/CaveWaterVolume"), VRRig.LocalRig.transform);
+        var source = GameObject.Find("Environment Objects/LocalObjects_Prefab/ForestToBeach/ForestToBeach_Prefab_V4/CaveWaterVolume");
+        if (source == null)
+        {
+            // Try alternative path for newer game versions
+            source = GameObject.Find("CaveWaterVolume");
+        }
+        if (source == null || VRRig.LocalRig == null)
+        {
+            Bark.Tools.Logging.Warning("Swim: Could not find CaveWaterVolume or LocalRig");
+            return;
+        }
+        waterVolume = Instantiate(source, VRRig.LocalRig.transform);
         waterVolume.transform.localScale = new Vector3(5f, 1000f, 5f);
         waterVolume.transform.localPosition = new Vector3(0, 50, 0);
         waterVolume.SetActive(false);
@@ -30,13 +41,13 @@ public class Swim : BarkModule
     {
         if (!MenuController.Instance.Built) return;
         base.OnEnable();
-        waterVolume.SetActive(true);
+        waterVolume?.SetActive(true);
     }
 
     protected override void Cleanup()
     {
         if (!MenuController.Instance.Built) return;
-        waterVolume.SetActive(false);
+        waterVolume?.SetActive(false);
         GTPlayer.Instance.audioManager.UnsetMixerSnapshot();
     }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -13,6 +12,7 @@ using BepInEx.Configuration;
 using GorillaLocomotion;
 using GorillaNetworking;
 using Bark.Extensions;
+using Bark.Patches;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
@@ -57,6 +57,7 @@ public class Plugin : BaseUnityPlugin
 
     public void Setup()
     {
+        VRRigCachePatches.Subscribe();
         gt = gameObject.GetOrAddComponent<GestureTracker>();
         nph = gameObject.GetOrAddComponent<NetworkPropertyHandler>();
         MenuController = Instantiate(monkeMenuPrefab)?.AddComponent<MenuController>();

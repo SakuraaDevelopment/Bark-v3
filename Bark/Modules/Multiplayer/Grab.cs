@@ -5,6 +5,7 @@ using Bark.GUI;
 using Bark.Tools;
 using GorillaLocomotion;
 using Bark.Extensions;
+using Bark.Helpers;
 using UnityEngine;
 
 namespace Bark.Modules.Multiplayer;
@@ -89,7 +90,7 @@ public class Grab : BarkModule
 
     private void DistributeGrabbyThings()
     {
-        foreach (var rig in GorillaParent.instance.vrrigs)
+        foreach (var rig in RigHelper.GetActiveRigs())
             try
             {
                 if (rig.OwningNetPlayer.IsLocal ||

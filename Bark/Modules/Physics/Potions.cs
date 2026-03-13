@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Bark.Extensions;
+using Bark.Helpers;
 using Bark.Gestures;
 using Bark.GUI;
 using Bark.Interaction;
@@ -71,7 +72,7 @@ public class Potions : BarkModule
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        foreach (var rig in GorillaParent.instance.vrrigs)
+        foreach (var rig in RigHelper.GetActiveRigs())
         {
             try
             {

@@ -7,6 +7,7 @@ using Bark.Patches;
 using Bark.Tools;
 using GorillaLocomotion;
 using Bark.Extensions;
+using Bark.Helpers;
 using UnityEngine;
 
 namespace Bark.Modules.Multiplayer;
@@ -226,7 +227,7 @@ public class Fireflies : BarkModule
 
     private IEnumerator SpawnFireflies(Transform hand, bool isLeft)
     {
-        var rigs = GorillaParent.instance.vrrigs;
+        var rigs = RigHelper.GetActiveRigs();
         var count = rigs.Count;
         Sounds.Play(Sounds.Sound.BeeSqueeze, .1f, isLeft);
         for (var i = 0; i < count; i++)

@@ -2,6 +2,7 @@
 using Bark.Networking;
 using Bark.Patches;
 using Bark.Extensions;
+using Bark.Helpers;
 using UnityEngine;
 
 namespace Bark.Modules.Multiplayer;
@@ -25,7 +26,7 @@ internal class ESP : BarkModule
     {
         VRRigCachePatches.OnRigCached += OnRigCached;
         NetworkPropertyHandler.Instance.OnPlayerJoined += OnPlayerJoined;
-        foreach (var rig in GorillaParent.instance.vrrigs)
+        foreach (var rig in RigHelper.GetActiveRigs())
             if (!rig.isOfflineVRRig)
             {
                 rig.skeleton.renderer.enabled = true;
@@ -69,7 +70,7 @@ internal class ESP : BarkModule
     {
         VRRigCachePatches.OnRigCached -= OnRigCached;
         NetworkPropertyHandler.Instance.OnPlayerJoined -= OnPlayerJoined;
-        foreach (var rig in GorillaParent.instance.vrrigs)
+        foreach (var rig in RigHelper.GetActiveRigs())
         {
             rig.skeleton.renderer.enabled = false;
             rig.skeleton.renderer.material.shader = Uber;

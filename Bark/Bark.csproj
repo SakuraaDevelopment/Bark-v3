@@ -10,10 +10,11 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <GameAssemblyPath>$(MSBuildProjectDirectory)\..\libs\Managed</GameAssemblyPath>
-        <BepInExAssemblyPath>$(MSBuildProjectDirectory)\..\libs\BepInEx</BepInExAssemblyPath>
-		<PluginsAssemblyPath>$(MSBuildProjectDirectory)\..\libs\Plugins</PluginsAssemblyPath>
+        <GamePath>C:\Program Files (x86)\Steam\steamapps\common\Gorilla Tag</GamePath>
+        <GameAssemblyPath>$(GamePath)\Gorilla Tag_Data\Managed</GameAssemblyPath>
+        <BepInExAssemblyPath>$(GamePath)\BepInEx\core</BepInExAssemblyPath>
         <PluginsPath>$(GamePath)\BepInEx\plugins</PluginsPath>
+		<PluginsAssemblyPath>$(MSBuildProjectDirectory)\..\libs\Plugins</PluginsAssemblyPath>
     </PropertyGroup>
 
     <Target Name="CopyToPlugins" AfterTargets="Build" Condition="'$(GITHUB_ACTIONS)' != 'true'">
@@ -25,6 +26,10 @@
 
     <ItemGroup>
       <None Remove="Resources\barkbundle" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\barkbundle" />
     </ItemGroup>
 
     <ItemGroup>
@@ -679,9 +684,6 @@
         </Reference>
         <Reference Include="UnityEngine.XRModule">
             <HintPath>$(GameAssemblyPath)\UnityEngine.XRModule.dll</HintPath>
-        </Reference>
-		<Reference Include="Utilla" Publicize="true">
-			<HintPath>$(PluginsAssemblyPath)\Utilla.dll</HintPath>
 		</Reference>
         <Reference Include="Valve.Newtonsoft.Json">
             <HintPath>$(GameAssemblyPath)\Valve.Newtonsoft.Json.dll</HintPath>
