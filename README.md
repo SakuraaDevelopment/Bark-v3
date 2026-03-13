@@ -1,5 +1,4 @@
 # Revive of Bark (aka Grate)
-check out GtagCamera.com 👀
 
 ### Imaginary Rules
 
