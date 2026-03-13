@@ -1,5 +1,5 @@
 # Revive of Bark (aka Grate)
-Note from Sakuraa: I really didnt do much, just having a source for future modders to go off of to continue this project. Feel free to fork. I will not add myself to the credits. However if you wish to support me, check out GtagCamera.com.
+check out GtagCamera.com 👀
 
 ### Imaginary Rules
 
@@ -10,6 +10,7 @@ Note from Sakuraa: I really didnt do much, just having a source for future modde
 
 ### Credits
 
+- Sakuraa is the current maintainer of Bark
 - Graze is the previous maintainer of Bark
 - KyleTheScientist made the backbone of Bark called Bark.
 - baggZ, Gadabuda, Monky made mods
