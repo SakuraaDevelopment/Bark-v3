@@ -13,3 +13,6 @@ Note from Sakuraa: I really didnt do much, just having a source for future modde
 - Graze is the previous maintainer of Bark
 - KyleTheScientist made the backbone of Bark called Bark.
 - baggZ, Gadabuda, Monky made mods
+
+
+This product is not affiliated with Another Axiom Inc. or its videogames Gorilla Tag and Orion Drift and is not endorsed or otherwise sponsored by Another Axiom. Portions of the materials contained herein are property of Another Axiom. ©2021 Another Axiom Inc.
