@@ -14,7 +14,7 @@ internal static class PluginInfo
         "- Refrain from trolling or deciving other gorillas.\n" +
         "- Have fun.\n" +
         "\n" +
-        "Credits\n" +=
+        "Credits\n" +
         "- Sakuraa is the current maintainer of Bark.\n" +
         "- Check out GtagCamera.com to support Sakuraa\n" +
         "- Graze is the previous maintainer of Bark.\n" +

@@ -38,6 +38,12 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
     </ItemGroup>
+    
+    <ItemGroup>
+    <Reference Include="Utilla" Publicize="true">
+        <HintPath>$(PluginsPath)\Utilla.dll</HintPath>
+    </Reference>
+    </ItemGroup>
 
     <ItemGroup>
         <Reference Include="0Harmony">

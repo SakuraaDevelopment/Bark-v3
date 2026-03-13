@@ -16,12 +16,16 @@ using Bark.Patches;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
+using Utilla.Attributes;
 
 namespace Bark;
 
 [BepInPlugin(PluginInfo.Guid, PluginInfo.Name, PluginInfo.Version)]
+[BepInDependency("org.legoandmars.gorillatag.utilla", "1.5.0")]
+[ModdedGamemode]
 public class Plugin : BaseUnityPlugin
 {
+    public static bool InAllowedRoom;
     public static Plugin? Instance;
     public static bool Initialized;
     public static AssetBundle? AssetBundle;
@@ -134,8 +138,6 @@ public class Plugin : BaseUnityPlugin
             Logging.Info("Platform: ", platform);
             IsSteam = platform.PlatformTag.Contains("Steam");
 
-            Setup();
-            
             if (DebugMode)
                 CreateDebugGUI();
         }
@@ -143,5 +145,19 @@ public class Plugin : BaseUnityPlugin
         {
             Logging.Exception(ex);
         }
+    }
+
+    [ModdedGamemodeJoin]
+    private void OnModdedRoomJoined(string gamemode)
+    {
+        InAllowedRoom = true;
+        if (Initialized) Setup();
+    }
+
+    [ModdedGamemodeLeave]
+    private void OnModdedRoomLeft(string gamemode)
+    {
+        InAllowedRoom = false;
+        Cleanup();
     }
 }
